@@ -21,7 +21,7 @@
 
     <header class="mb-12 flex flex-col md:flex-row md:items-center gap-8">
         <div class="relative group">
-            <img src="https://placehold.co/400x400/1f2937/60a5fa?text=AH"
+            <img th:src="@{/thumbnail/profilepic}"
                  alt="Aiman Haziq"
                  class="w-32 h-32 md:w-40 md:h-40 rounded-xl object-cover border-2 border-gray-700 group-hover:border-blue-500 transition-colors shadow-2xl">
             <div class="absolute -inset-1 bg-blue-500/20 rounded-xl blur opacity-0 group-hover:opacity-100 transition duration-500"></div>
@@ -30,25 +30,82 @@
         <div>
             <h1 class="text-5xl font-bold mb-3 tracking-tight text-white">Aiman Haziq</h1>
             <p class="text-blue-400 text-lg font-medium mb-6">Aspiring Backend Engineer • Shah Alam, MY</p>
-            <div class="flex gap-4">
-                <a href="https://github.com/Toostew" target="_blank" class="px-4 py-2 bg-gray-800 rounded-lg border border-gray-700 hover:border-blue-500 hover:bg-gray-700/50 transition-all text-sm font-medium">GitHub</a>
-                <a href="https://leetcode.com/u/Toostew/" target="_blank" class="px-4 py-2 bg-gray-800 rounded-lg border border-gray-700 hover:border-blue-500 hover:bg-gray-700/50 transition-all text-sm font-medium">LeetCode</a>
+
+            <div class="flex flex-wrap gap-3">
+                <a href="https://github.com/Toostew" target="_blank" class="flex items-center gap-2 px-4 py-2 bg-gray-800 rounded-lg border border-gray-700 hover:border-blue-500 hover:bg-gray-700/50 transition-all text-sm font-medium">
+                    <span>GitHub</span>
+                </a>
+                <a href="https://leetcode.com/u/Toostew/" target="_blank" class="flex items-center gap-2 px-4 py-2 bg-gray-800 rounded-lg border border-gray-700 hover:border-blue-500 hover:bg-gray-700/50 transition-all text-sm font-medium">
+                    <span>LeetCode</span>
+                </a>
+                <a href="mailto:tookaystewie@gmail.com" class="flex items-center gap-2 px-4 py-2 bg-blue-600/10 rounded-lg border border-blue-500/30 hover:border-blue-500 hover:bg-blue-500/20 transition-all text-sm font-medium text-blue-400">
+                    <svg class="w-4 h-4"  stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                    </svg>
+                    <span>Contact Me</span>
+                </a>
             </div>
         </div>
     </header>
 
     <section class="mb-20 max-w-3xl">
-        <h2 class="text-xl font-semibold mb-4 text-gray-500 uppercase tracking-widest text-xs">Overview</h2>
+        <h2 class="text-xl font-semibold mb-4 text-gray-500 uppercase tracking-widest text-xs">About me</h2>
         <p class="text-gray-400 text-lg leading-relaxed">
-            I'm a first-year Computer Science student based in <span class="text-gray-200">Shah Alam</span>.
-            While I'm early in my academics, I've spent my time focusing on building backend-focused projects.
-            I enjoy the challenge of <span class="text-blue-400">backend development</span>, specifically using <span class="text-blue-400">Java and Spring Boot</span> to create efficient and (eventually) scalable systems.
-            Career-wise, I hope to eventually specialize into <span class="text-blue-400">Cloud Engineering</span>.
+            I'm a first-year Computer Science student at <span class="text-gray-200">Universiti Teknologi Petronas (UTP)</span>
+            with a passion for the 'invisible' side of tech: infrastructure and backend systems.
+            I enjoy the challenge of <span class="text-blue-400 font-semibold">backend development</span>, specifically using <span class="text-blue-400 font-semibold">Java and Spring Boot</span>
+            to create maintainable, reliable and scalable systems, hosting them efficiently and securely on remote VPS and home-lab environments.
+            My long-term goal is to eventually specialize as a <span class="text-blue-400 font-semibold">Cloud Engineer</span> in the B2B infrastructure space.
+
         </p>
     </section>
 
     <section class="mb-20">
-        <h2 class="text-2xl font-semibold mb-8 flex items-center gap-3">
+        <h2 class="text-xl font-semibold mb-6 text-gray-500 uppercase tracking-widest text-xs">Featured Application</h2>
+
+        <div class="relative group">
+            <div class="absolute -inset-1 bg-gradient-to-r from-blue-600 to-cyan-500 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000"></div>
+
+            <div class="relative bg-gray-800 border border-gray-700 p-8 rounded-2xl flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
+                <div class="flex-1">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="flex h-2 w-2">
+                          <span class="animate-ping absolute inline-flex h-2 w-2 rounded-full bg-emerald-400 opacity-75"></span>
+                          <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                        </span>
+                        <span class="text-emerald-400 text-xs font-bold uppercase tracking-wider">Active Project</span>
+                    </div>
+
+                    <h3 class="text-3xl font-bold text-white mb-3">Noteshare</h3>
+                    <p class="text-gray-400 text-lg leading-relaxed mb-6">
+                        A full-stack collaborative platform for students to share and organize university notes.
+                        Currently self-hosted, featuring a semi-decoupled microservices architecture
+                    </p>
+
+                    <div class="flex flex-wrap gap-3">
+                        <span class="px-3 py-1 bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-full text-xs font-semibold">Spring Boot</span>
+                        <span class="px-3 py-1 bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-full text-xs font-semibold">MySQL</span>
+                        <span class="px-3 py-1 bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-full text-xs font-semibold">Cloudflare R2</span>
+                        <span class="px-3 py-1 bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-full text-xs font-semibold">Apache Kafka</span>
+                        <span class="px-3 py-1 bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-full text-xs font-semibold">Thymeleaf</span>
+                    </div>
+                </div>
+
+                <div class="w-full md:w-auto">
+                    <a href="https://toostew.com/noteshare"
+                       class="inline-flex items-center justify-center w-full md:w-auto px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl transition-all transform hover:scale-105 shadow-lg shadow-blue-600/20 group">
+                        Enter Noteshare
+                        <svg class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="mb-20">
+        <h2 class="text-2xl font-semibold mb-8 flex items-center gap-3 text-white">
             <span class="w-10 h-1 bg-blue-600 rounded-full"></span>
             Recent GitHub Activity
         </h2>
@@ -66,7 +123,7 @@
 
                     <p class="text-gray-400 text-sm leading-relaxed mb-6 min-h-[60px]"
                        th:text="${repo.description != null ? repo.description : 'A backend-focused project exploring Spring Boot and Java features.'}">
-                        Description goes here.
+                        Description (if you're reading this the API isnt working properly)
                     </p>
                 </div>
 
@@ -92,52 +149,9 @@
             </div>
         </div>
     </section>
-    <section class="mb-20">
-        <h2 class="text-xl font-semibold mb-6 text-gray-500 uppercase tracking-widest text-xs">Featured Application</h2>
-
-        <div class="relative group">
-            <div class="absolute -inset-1 bg-gradient-to-r from-blue-600 to-cyan-500 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000"></div>
-
-            <div class="relative bg-gray-800 border border-gray-700 p-8 rounded-2xl flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
-                <div class="flex-1">
-                    <div class="flex items-center gap-3 mb-4">
-                        <span class="flex h-2 w-2">
-                          <span class="animate-ping absolute inline-flex h-2 w-2 rounded-full bg-emerald-400 opacity-75"></span>
-                          <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                        </span>
-                        <span class="text-emerald-400 text-xs font-bold uppercase tracking-wider">Active Project</span>
-                    </div>
-
-                    <h3 class="text-3xl font-bold text-white mb-3">Noteshare</h3>
-                    <p class="text-gray-400 text-lg leading-relaxed mb-6">
-                        A full-stack collaborative platform for students to share and organize university notes.
-                        Currently self-hosted, with an admittedly less-than-modern UI (I'll work on that)
-                    </p>
-
-                    <div class="flex flex-wrap gap-3">
-                        <span class="px-3 py-1 bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-full text-xs font-semibold">Spring Boot</span>
-                        <span class="px-3 py-1 bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-full text-xs font-semibold">MYSQL</span>
-                        <span class="px-3 py-1 bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-full text-xs font-semibold">Thymeleaf</span>
-                        <span class="px-3 py-1 bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-full text-xs font-semibold">Cloudflare R2</span>
-                        <span class="px-3 py-1 bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-full text-xs font-semibold">Apache Kafka</span>
-                    </div>
-                </div>
-
-                <div class="w-full md:w-auto">
-                    <a href="https://toostew.com/noteshare"
-                       class="inline-flex items-center justify-center w-full md:w-auto px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl transition-all transform hover:scale-105 shadow-lg shadow-blue-600/20 group">
-                        Enter Noteshare
-                        <svg class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
-                        </svg>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </section>
 
     <footer class="border-t border-gray-800 pt-8 text-center">
-        <p class="text-gray-600 text-sm">© 2026 Aiman Haziq • Built with Spring Boot & Tailwind CSS</p>
+        <p class="text-gray-600 text-sm">ooOOoo You're gonna hire me sooo baddd</p>
     </footer>
 
 </main>

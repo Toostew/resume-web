@@ -4,6 +4,9 @@ package com.toostew.resume_web.controller;
 import com.toostew.resume_web.dto.RepoReturnObject;
 import com.toostew.resume_web.service.GithubService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
@@ -30,5 +33,12 @@ public class PortfolioController {
 
 
         return "portfolio";
+    }
+
+    @GetMapping("/thumbnail/profilepic")
+    public ResponseEntity<Resource> getProfilePic(){
+        Resource resource = new ClassPathResource("static/pfp.jpg");
+        return ResponseEntity.ok()
+                .body(resource);
     }
 }
