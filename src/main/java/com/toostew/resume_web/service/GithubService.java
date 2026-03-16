@@ -31,6 +31,12 @@ public class GithubService {
     }
 
 
+
+    //the value is actually the name of the cache we want to use. Used with key in the key-value pair
+    //we can capture the argument being passed into the method to use in the key
+    //notice how #repo and the argument repo are actually the same thing
+    //so essentially we are storing the value for each key
+    @Cacheable(value = "repoLanguages", key = "#repo")
     public Map<String, Integer> getRepoLanguages(String repo){
         String uri = "/repos/Toostew/" + repo + "/languages";
         return restClient.get()

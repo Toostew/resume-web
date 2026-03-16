@@ -14,7 +14,7 @@ public class CacheConfig {
 
     @Bean
     public CacheManager cacheManager() {
-        CaffeineCacheManager cacheManager = new CaffeineCacheManager("repos");
+        CaffeineCacheManager cacheManager = new CaffeineCacheManager("repos","repoLanguages");
         cacheManager.setCaffeine(caffeineCacheBuilder());
         return cacheManager;
     }
