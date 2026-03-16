@@ -2,7 +2,9 @@ package com.toostew.resume_web.service;
 
 
 import com.toostew.resume_web.dto.RepoReturnObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
@@ -15,8 +17,20 @@ public class GithubService {
 
     final private RestClient restClient;
 
+
+
+    //we are essentially going to call ourself
+    //if we call @cacheable methods directly without going through a class, it actually bypasses the
+    //caching altogether.
+    //by providing a seperate GithubService class we can route our data through, we are technically not calling ourselves
+    //hence, we dont bypass the cache. pretty dumb and smart
+    @Autowired
+    @Lazy
+    private GithubService self;
+
     public GithubService() {
         this.restClient = RestClient.create("https://api.github.com");
+
     }
 
     // "repos" is the name of the cache bucket
@@ -46,10 +60,10 @@ public class GithubService {
     }
 
     public List<RepoReturnObject> getCombinedData() {
-        List<RepoReturnObject> repos = getRecentRepos();
+        List<RepoReturnObject> repos = self.getRecentRepos();
         for (RepoReturnObject repo : repos) {
             // Fetch languages using the repo name and set it in the DTO
-            Map<String, Integer> langs = getRepoLanguages(repo.getName());
+            Map<String, Integer> langs = self.getRepoLanguages(repo.getName());
             repo.setLanguages(langs);
         }
         return repos;
