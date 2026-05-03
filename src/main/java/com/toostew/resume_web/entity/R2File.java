@@ -8,7 +8,7 @@ import java.time.LocalDate;
 
 //this is the metadata to store files for the blog
 @Entity
-public class file {
+public class R2File {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
