@@ -18,9 +18,12 @@ public class ThumbnailDAO {
     }
 
 
+
+    //returns thumbnail but with ID
     @Transactional
-    public void createFile(Thumbnail thumbnail) {
+    public Thumbnail create(Thumbnail thumbnail) {
         em.persist(thumbnail);
+        return  thumbnail;
     }
 
     public Thumbnail readFile(int id) {
@@ -34,7 +37,7 @@ public class ThumbnailDAO {
     }
 
     @Transactional
-    public void updateFile(Thumbnail thumbnail) {
+    public void update(Thumbnail thumbnail) {
         try{
             Thumbnail temp = em.find(Thumbnail.class, thumbnail.getId());
             temp.setContent_type(thumbnail.getContent_type());
@@ -52,7 +55,7 @@ public class ThumbnailDAO {
     }
 
     @Transactional
-    public void deleteFile(int id) {
+    public void delete(int id) {
         try{
             Thumbnail temp = em.find(Thumbnail.class, id);
             em.remove(temp);

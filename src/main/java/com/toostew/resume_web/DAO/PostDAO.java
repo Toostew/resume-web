@@ -2,7 +2,9 @@ package com.toostew.resume_web.DAO;
 
 
 import com.toostew.resume_web.entity.Post;
+import com.toostew.resume_web.exception.ControllerException;
 import com.toostew.resume_web.exception.DAOException;
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -18,22 +20,29 @@ public class PostDAO {
     }
 
     @Transactional
-    public void createFile(Post post) {
-        em.persist(post);
+    public void create(Post post) {
+        try {
+            em.persist(post);
+        } catch(EntityExistsException e) {
+            throw new ControllerException("Issue in PostDAO: Post already exists", e);
+        } catch (Exception e) {
+            throw new ControllerException("Issue in PostDAO: Unknown Issue", e);
+        }
+
     }
 
-    public Post readFile(int id) {
+    public Post read(int id) {
         try{
             return em.find(Post.class, id);
         } catch (EntityNotFoundException e) {
-            throw new DAOException("Issue in FileDAO: id doesn't exist", e);
+            throw new DAOException("Issue in PostDAO: id doesn't exist", e);
         } catch (Exception e) {
-            throw new DAOException("Issue in FileDAO: unknown issue", e);
+            throw new DAOException("Issue in PostDAO: unknown issue", e);
         }
     }
 
     @Transactional
-    public void updateFile(Post post) {
+    public void update(Post post) {
         try{
             Post temp = em.find(Post.class, post.getId());
             temp.setContent(post.getContent());
@@ -52,7 +61,7 @@ public class PostDAO {
     }
 
     @Transactional
-    public void deleteFile(int id) {
+    public void delete(int id) {
         try{
             Post temp = em.find(Post.class, id);
             em.remove(temp);
