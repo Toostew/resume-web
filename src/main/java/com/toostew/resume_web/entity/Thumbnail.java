@@ -9,6 +9,7 @@ import java.util.Set;
 
 //literally the same as file but can only accept images
 @Entity
+@Table(name = "thumbnail")
 public class Thumbnail {
 
     @Id

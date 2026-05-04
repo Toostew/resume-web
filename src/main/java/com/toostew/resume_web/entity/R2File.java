@@ -8,6 +8,7 @@ import java.time.LocalDate;
 
 //this is the metadata to store files for the blog
 @Entity
+@Table(name = "file")
 public class R2File {
 
     @Id

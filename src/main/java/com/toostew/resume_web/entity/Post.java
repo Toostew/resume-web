@@ -7,6 +7,7 @@ import java.time.LocalDate;
 
 //A post is a fundamental unit for the blog, each contains all the metadata needed to properly display
 @Entity
+@Table(name = "post") //docker is linux-based, and is case sensitive so we must specify
 public class Post {
 
 
