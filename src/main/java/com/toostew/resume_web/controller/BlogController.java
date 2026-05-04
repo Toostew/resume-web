@@ -1,20 +1,22 @@
 package com.toostew.resume_web.controller;
 
 
+import com.toostew.resume_web.DAO.FileDAO;
 import com.toostew.resume_web.DAO.PostDAO;
 import com.toostew.resume_web.DAO.ThumbnailDAO;
 import com.toostew.resume_web.entity.Post;
+import com.toostew.resume_web.entity.R2File;
 import com.toostew.resume_web.entity.Thumbnail;
 import com.toostew.resume_web.exception.ControllerException;
 import com.toostew.resume_web.exception.DAOException;
 import com.toostew.resume_web.exception.R2ServiceException;
 import com.toostew.resume_web.service.R2Service;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -35,15 +37,19 @@ public class BlogController {
     private R2Service r2Service;
     private PostDAO postDAO;
     private ThumbnailDAO thumbnailDAO;
+    private FileDAO fileDAO;
 
-    public BlogController(R2Service r2Service, PostDAO postDAO, ThumbnailDAO thumbnailDAO) {
+    public BlogController(R2Service r2Service, PostDAO postDAO, ThumbnailDAO thumbnailDAO, FileDAO fileDAO) {
         this.r2Service = r2Service;
         this.postDAO = postDAO;
         this.thumbnailDAO = thumbnailDAO;
+        this.fileDAO = fileDAO;
     }
 
     @GetMapping("/blog")
     public String getBlogPage(Model model) {
+        model.addAttribute("numberOfPosts", postDAO.getTotalNumberOfPosts());
+        model.addAttribute("ListOfAllPosts", postDAO.getAllPosts());
         return "blog-front";
     }
 
@@ -120,5 +126,41 @@ public class BlogController {
 
         return "redirect:/blog";
     }
+
+
+    //render image, not thumbnail
+    @GetMapping("/blog/render-image/{id}")
+    @ResponseBody
+    public ResponseEntity<Resource> renderImage(@PathVariable int id){
+        try{
+            R2File temp = fileDAO.readFile(id);
+            ResponseEntity<Resource> R2Object = r2Service.getObject(bucketName, temp.getStored_name());
+            return R2Object;
+        } catch (R2ServiceException e){
+            throw new ControllerException("Issue in BlogController: could not read R2 file from R2Service; R2 Service Issue", e);
+        } catch (DAOException e){
+            throw new ControllerException("Issue in BlogController: could not read R2 file from R2Service; DAO issue", e);
+        } catch (Exception e){
+            throw new ControllerException("Issue in BlogController: could not read R2 file from R2Service; unknown issue", e);
+        }
+    }
+
+    //render thumbnail of post
+    @GetMapping("/blog/render-thumbnail/{id}")
+    @ResponseBody
+    public ResponseEntity<Resource> renderThumbnail(@PathVariable int id){
+        try{
+            Thumbnail temp = thumbnailDAO.readFile(id);
+            ResponseEntity<Resource> R2Object = r2Service.getObject(bucketName, temp.getStored_name());
+            return R2Object;
+        } catch (R2ServiceException e){
+            throw new ControllerException("Issue in BlogController: could not read R2 file from R2Service; R2 Service Issue", e);
+        } catch (DAOException e){
+            throw new ControllerException("Issue in BlogController: could not read R2 file from R2Service; DAO issue", e);
+        } catch (Exception e){
+            throw new ControllerException("Issue in BlogController: could not read R2 file from R2Service; unknown issue", e);
+        }
+    }
+
 
 }
