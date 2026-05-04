@@ -116,7 +116,7 @@
 
         <!-- Featured Latest Post Card -->
         <div th:if="${latestPost != null}">
-            <a th:href="@{/blog/{slug}(slug=${latestPost.titleURLFriendly})}"
+            <a th:href="@{/blog/{slug}(slug=${latestPost.id})}"
                class="group relative block bg-gray-800/40 border border-gray-700/50 p-6 rounded-2xl hover:border-blue-500/40 hover:bg-gray-800/60 transition-all duration-300 overflow-hidden shadow-lg">
                 <div class="flex flex-col md:flex-row gap-6 items-center">
                     <div class="w-full md:w-32 h-24 shrink-0 rounded-lg overflow-hidden border border-gray-700">

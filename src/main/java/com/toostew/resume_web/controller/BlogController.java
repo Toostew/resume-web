@@ -13,6 +13,7 @@ import com.toostew.resume_web.exception.R2ServiceException;
 import com.toostew.resume_web.service.R2Service;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,9 +21,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
-import java.util.Locale;
 import java.util.UUID;
 
 @Controller
@@ -64,6 +64,7 @@ public class BlogController {
                                  @RequestParam(name = "title") String postTitle,
                                  @RequestParam(name = "description") String description,
                                  @RequestParam(name = "thumbnail") MultipartFile thumbnailFile,
+                                 @RequestParam(name = "PostType") String postType,
                                  @RequestParam(name = "code") String code){
 
         if(!code.equalsIgnoreCase(serviceCode)){
@@ -80,7 +81,7 @@ public class BlogController {
         thumbnailObj.setSize(thumbnailFile.getSize());
         thumbnailObj.setContent_type(thumbnailFile.getContentType());
         thumbnailObj.setDate_created(date);
-        Thumbnail recaptureThumbnail = new  Thumbnail();
+        Thumbnail recaptureThumbnail = new Thumbnail();
         try{
             recaptureThumbnail = thumbnailDAO.create(thumbnailObj);
         } catch(DAOException e){
@@ -98,6 +99,8 @@ public class BlogController {
         postObj.setThumbnail(recaptureThumbnail);
         postObj.setUploadDate(date);
         postObj.setTitleURLFriendly(uuid.toString());
+        postObj.setPtype(postType);
+
         System.out.println("created PostObj");
         try{
             System.out.println("uploading Post");
@@ -159,6 +162,41 @@ public class BlogController {
             throw new ControllerException("Issue in BlogController: could not read R2 file from R2Service; DAO issue", e);
         } catch (Exception e){
             throw new ControllerException("Issue in BlogController: could not read R2 file from R2Service; unknown issue", e);
+        }
+    }
+
+    //renders the blog from the contents of the posthtml
+    @GetMapping("/blog/{id}")
+    @ResponseBody
+    public ResponseEntity<byte[]> renderBlog(@PathVariable int id) {
+        try {
+            Post temp = postDAO.read(id);
+
+            if ("post".equalsIgnoreCase(temp.getPtype())) {
+                // If it's a post, we still return HTML, but we have to change the return type to
+                // handle byte arrays, so we convert the String to bytes.
+                return ResponseEntity.ok()
+                        .contentType(MediaType.TEXT_HTML)
+                        .body(temp.getContent().getBytes(StandardCharsets.UTF_8));
+            }
+
+            else if ("image".equalsIgnoreCase(temp.getPtype())) {
+                // Case: No fluff, just the pixels.
+                Thumbnail thumb = temp.getThumbnail();
+
+                // Fetch the actual binary data from R2
+                ResponseEntity<Resource> r2ServiceObject = r2Service.getObject(bucketName,temp.getThumbnail().getStored_name());
+                byte[] imageBytes = r2ServiceObject.getBody().getContentAsByteArray();
+                return ResponseEntity.ok()
+                        .contentType(MediaType.parseMediaType(thumb.getContent_type()))
+                        .contentLength(thumb.getSize())
+                        .body(imageBytes);
+            }
+
+            return ResponseEntity.notFound().build();
+
+        } catch (Exception e) {
+            throw new ControllerException("Issue in BlogController: could not render raw data", e);
         }
     }
 

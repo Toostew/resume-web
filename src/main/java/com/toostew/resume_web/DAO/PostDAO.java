@@ -51,6 +51,7 @@ public class PostDAO {
             temp.setTitle(post.getTitle());
             temp.setTitleURLFriendly(post.getTitleURLFriendly());
             temp.setUploadDate(post.getUploadDate());
+            temp.setPtype(post.getPtype());
             em.merge(temp);
             System.out.println("Updating file: " + post.getId());
         } catch (EntityNotFoundException e) {

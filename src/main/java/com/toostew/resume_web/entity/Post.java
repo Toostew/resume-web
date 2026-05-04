@@ -35,6 +35,9 @@ public class Post {
     @Column(name = "content")
     private String content; //the content, literal markdown
 
+    @Column(name = "ptype") // post type, either post or art
+    private String ptype;
+
 
     public int getId() {
         return id;
@@ -91,4 +94,8 @@ public class Post {
     public void setContent(String content) {
         this.content = content;
     }
+
+    public String getPtype() {return ptype;}
+
+    public void setPtype(String ptype) {this.ptype = ptype;}
 }
