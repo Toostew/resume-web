@@ -20,9 +20,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 @Controller
@@ -76,7 +78,7 @@ public class BlogController {
         LocalDate date = LocalDate.now();
 
 
-        thumbnailObj.setStored_name(uuid.toString());
+        thumbnailObj.setStored_name(uuid.toString() + "-thumbnail");
         thumbnailObj.setOriginal_name(thumbnailFile.getOriginalFilename());
         thumbnailObj.setSize(thumbnailFile.getSize());
         thumbnailObj.setContent_type(thumbnailFile.getContentType());
@@ -198,6 +200,63 @@ public class BlogController {
         } catch (Exception e) {
             throw new ControllerException("Issue in BlogController: could not render raw data", e);
         }
+    }
+
+
+    //upload page for images and site assets that can be referenced within the html
+    //NOTE: because of how it's made the images need to be uploaded first before the html
+    @GetMapping("/blog/image-upload")
+    public String uploadImage(){
+
+        return "blog-image-upload";
+    }
+
+    @GetMapping("/blog/image-upload/view")
+    public String viewImages(Model model){
+
+        List<R2File> allFiles = fileDAO.readAllFiles();
+        model.addAttribute("allFiles", allFiles);
+
+        return "blog-image-upload-view";
+    }
+
+
+    //process the image upload
+    @PostMapping("/blog/image-upload/process")
+    public String processImageUpload(@RequestParam(name = "code") String code,
+                                     @RequestParam(name = "file") MultipartFile file){
+
+        if(!code.equalsIgnoreCase(serviceCode)){
+            return "redirect:/blog/image-upload";
+        }
+
+        try{
+            //create new R2File object
+            R2File r2FileObject = new R2File();
+            r2FileObject.setOriginal_name(file.getOriginalFilename().trim() + "-file"); //original name
+            r2FileObject.setSize(file.getSize()); //file size
+            r2FileObject.setStored_name(UUID.randomUUID().toString()); //random UUID
+            r2FileObject.setContent_type(file.getContentType()); //MIME type
+            r2FileObject.setDate_created(LocalDate.now()); //date
+
+            //submit to db
+            R2File recapturedObject = fileDAO.createFile(r2FileObject);
+
+
+            //submit to R2 Cloudflare
+            r2Service.postObjectWithBucketAndKey(bucketName, recapturedObject.getStored_name(), file.getBytes(), recapturedObject.getSize(), recapturedObject.getContent_type());
+        } catch (DAOException e){
+            throw new ControllerException("Issue in BlogController: could not upload R2 file from R2Service; DAO exception", e);
+        } catch (R2ServiceException e) {
+            throw new ControllerException("Issue in BlogController: could not upload R2 file from R2Service; R2 Service exception", e);
+        } catch (IOException e){
+            throw new ControllerException("Issue in BlogController: could not upload R2 file from R2Service; IO exception", e);
+        } catch (Exception e){
+            throw new ControllerException("Issue in BlogController: could not upload R2 file from R2Service; unknown issue", e);
+        }
+
+        return "redirect:/blog/image-upload";
+
     }
 
 

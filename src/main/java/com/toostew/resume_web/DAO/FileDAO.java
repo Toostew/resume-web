@@ -7,6 +7,9 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+import java.util.Set;
+
 @Repository
 public class FileDAO {
 
@@ -17,8 +20,9 @@ public class FileDAO {
     }
 
     @Transactional
-    public void createFile(R2File r2File) {
+    public R2File createFile(R2File r2File) {
         em.persist(r2File);
+        return  r2File;
     }
 
     public R2File readFile(int id) {
@@ -28,6 +32,21 @@ public class FileDAO {
             throw new DAOException("Issue in FileDAO: id doesn't exist", e);
         } catch (Exception e) {
             throw new DAOException("Issue in FileDAO: unknown issue", e);
+        }
+    }
+
+    //return all files
+    public List<R2File> readAllFiles() {
+        try {
+            // We create a query selecting "f" from the R2File entity
+            List<R2File> files = em.createQuery("SELECT f FROM R2File f", R2File.class)
+                    .getResultList();
+
+            // Convert the List to a Set and return
+            return files;
+
+        } catch (Exception e) {
+            throw new DAOException("Issue in FileDAO: Could not retrieve all files", e);
         }
     }
 

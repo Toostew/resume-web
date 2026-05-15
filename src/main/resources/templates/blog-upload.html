@@ -106,6 +106,17 @@
             </button>
         </div>
     </form>
+
+    <!-- NAVIGATION FOOTER ADDED HERE -->
+    <div class="mt-8 flex justify-between items-center px-2">
+        <a th:href="@{/blog/image-upload}" class="text-gray-600 hover:text-blue-400 transition-colors text-[10px] mono uppercase tracking-widest">
+            [ Go to Image Uplink ]
+        </a>
+        <a th:href="@{/blog}" class="text-gray-600 hover:text-white transition-colors text-[10px] mono uppercase tracking-widest">
+            [ Back to Index ]
+        </a>
+    </div>
+
 </main>
 
 <script>
@@ -117,27 +128,16 @@
         const selectedType = document.querySelector('input[name="PostType"]:checked').value;
 
         if (selectedType === 'image') {
-            // Hide ONLY the markdown content section
             contentSection.classList.add('hidden-section');
-
-            // Bypass requirements for markdown
             markdownArea.required = false;
-
-            // Set default value for markdown
             markdownArea.value = "-";
         } else {
-            // Show the markdown content section
             contentSection.classList.remove('hidden-section');
-
-            // Restore requirement
             markdownArea.required = true;
-
-            // Clear the default hyphen if user switches back
             if(markdownArea.value === "-") markdownArea.value = "";
         }
     }
 
-    // Initialize and listen for changes
     postTypeRadios.forEach(radio => radio.addEventListener('change', toggleInputs));
     toggleInputs();
 </script>
