@@ -86,7 +86,7 @@ public class PostDAO {
     //literally, no safeguards. For the love of god please oh please implement pagination in the future you sick bastard
     public List<Post> getAllPosts() {
         try{
-            TypedQuery<Post> query = em.createQuery("from Post p", Post.class);
+            TypedQuery<Post> query = em.createQuery("from Post p order by p.id desc", Post.class);
             List<Post> postList = query.getResultList();
             return postList;
         } catch (Exception e){
