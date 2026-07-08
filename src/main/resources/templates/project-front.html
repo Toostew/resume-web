@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aiman Haziq | Projects</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #111827; }
+        ::-webkit-scrollbar-thumb { background: #374151; border-radius: 10px; }
+
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .line-clamp-3 {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-100 min-h-screen selection:bg-blue-500/30 overflow-x-hidden relative flex flex-col">
+
+<div class="fixed inset-0 z-0 opacity-20" style="background-image: radial-gradient(#374151 0.5px, transparent 0.5px); background-size: 32px 32px;"></div>
+<div class="fixed -top-24 -left-24 w-96 h-96 bg-blue-600/10 rounded-full blur-[120px] z-0"></div>
+<div class="fixed top-1/2 -right-24 w-80 h-80 bg-cyan-600/10 rounded-full blur-[100px] z-0"></div>
+
+<main class="relative z-10 max-w-4xl mx-auto px-6 py-16 flex-grow w-full">
+
+    <header class="mb-14">
+        <a href="/" class="inline-flex items-center text-gray-500 hover:text-blue-400 transition-colors text-sm font-medium mb-6 group">
+            <svg class="w-4 h-4 mr-2 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+            </svg>
+            Back to Portfolio
+        </a>
+        <h1 class="text-4xl md:text-5xl font-bold tracking-tight text-white mb-4">Projects</h1>
+        <p class="text-gray-400 text-lg max-w-2xl">List of my work in embedded systems, backend, firmware, and other things</p>
+    </header>
+
+    <!-- Featured project(s) -->
+    <section th:if="${!#lists.isEmpty(FeaturedProjects)}" class="mb-16">
+        <span class="block text-blue-500 text-xs font-bold uppercase tracking-widest mb-4">Currently building</span>
+
+        <!-- Single featured project: full hero treatment -->
+        <a th:if="${#lists.size(FeaturedProjects) == 1}"
+           th:href="@{/projects/{slug}(slug=${FeaturedProjects[0].id})}"
+           class="group grid grid-cols-1 md:grid-cols-2 gap-0 bg-gray-800/40 backdrop-blur-sm border border-gray-800 rounded-2xl hover:border-blue-500/50 transition-all duration-500 overflow-hidden shadow-2xl">
+
+            <div class="overflow-hidden">
+                <img th:src="@{/projects/render-thumbnail/{id}(id=${FeaturedProjects[0].thumbnail.id})}"
+                     th:alt="${FeaturedProjects[0].projectName}"
+                     class="w-full h-64 md:h-full object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out">
+            </div>
+
+            <div class="p-8 md:p-10 flex flex-col justify-center">
+                <div class="flex items-center gap-3 mb-4">
+                    <span th:text="${#dates.format(FeaturedProjects[0].startDate, 'MMM yyyy')}"
+                          class="text-xs font-medium text-gray-500">Mar 2026</span>
+                    <span class="h-1 w-1 rounded-full bg-gray-700"></span>
+                    <span th:if="${FeaturedProjects[0].status == 'COMPLETED'}" class="text-xs font-medium text-emerald-400">Completed</span>
+                    <span th:unless="${FeaturedProjects[0].status == 'COMPLETED'}" class="text-xs font-medium text-blue-400">In progress</span>
+                </div>
+
+                <h2 class="text-3xl font-bold text-white mb-4 leading-tight" th:text="${FeaturedProjects[0].projectName}">Project Name</h2>
+                <p class="text-gray-400 leading-relaxed mb-6 line-clamp-3" th:text="${FeaturedProjects[0].description}">Description goes here...</p>
+
+                <span class="inline-flex items-center text-blue-500 text-sm font-semibold">
+                    View project
+                    <svg class="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                    </svg>
+                </span>
+            </div>
+        </a>
+
+        <!-- Multiple featured projects: grid of cards -->
+        <div th:if="${#lists.size(FeaturedProjects) > 1}" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <a th:each="project : ${FeaturedProjects}"
+               th:href="@{/projects/{slug}(slug=${project.id})}"
+               class="group flex flex-col bg-gray-800/40 backdrop-blur-sm border border-gray-800 rounded-2xl hover:border-blue-500/50 transition-all duration-500 overflow-hidden shadow-xl">
+
+                <div class="overflow-hidden">
+                    <img th:src="@{/projects/render-thumbnail/{id}(id=${project.thumbnail.id})}"
+                         th:alt="${project.projectName}"
+                         class="w-full h-44 object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out">
+                </div>
+
+                <div class="p-6 flex flex-col flex-grow">
+                    <div class="flex items-center gap-3 mb-3">
+                        <span th:text="${#dates.format(project.startDate, 'MMM yyyy')}"
+                              class="text-xs font-medium text-gray-500">Mar 2026</span>
+                        <span class="h-1 w-1 rounded-full bg-gray-700"></span>
+                        <span th:if="${project.status == 'COMPLETED'}" class="text-xs font-medium text-emerald-400">Completed</span>
+                        <span th:unless="${project.status == 'COMPLETED'}" class="text-xs font-medium text-blue-400">In progress</span>
+                    </div>
+
+                    <h2 class="text-xl font-bold text-white mb-3 leading-tight" th:text="${project.projectName}">Project Name</h2>
+                    <p class="text-gray-400 text-sm leading-relaxed mb-4 line-clamp-2" th:text="${project.description}">Description goes here...</p>
+
+                    <span class="mt-auto inline-flex items-center text-blue-500 text-sm font-semibold">
+                        View project
+                        <svg class="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                        </svg>
+                    </span>
+                </div>
+            </a>
+        </div>
+    </section>
+
+    <!-- Past projects -->
+    <section th:if="${!#lists.isEmpty(PastProjects)}">
+        <span class="block text-gray-500 text-xs font-bold uppercase tracking-widest mb-4">Past projects</span>
+
+        <div class="flex flex-col divide-y divide-gray-800 border-t border-gray-800">
+            <a th:each="project : ${PastProjects}"
+               th:href="@{/projects/{slug}(slug=${project.id})}"
+               class="group flex items-center gap-5 py-5 hover:bg-gray-800/30 transition-colors -mx-4 px-4 rounded-lg">
+
+                <img th:src="@{/projects/render-thumbnail/{id}(id=${project.thumbnail.id})}"
+                     th:alt="${project.projectName}"
+                     class="w-16 h-16 rounded-lg object-cover shrink-0 hidden sm:block">
+
+                <div class="flex-grow min-w-0">
+                    <div class="flex items-center gap-3 mb-1">
+                        <h3 class="font-semibold text-gray-100 group-hover:text-white transition-colors" th:text="${project.projectName}">Project Name</h3>
+                        <span th:if="${project.status == 'COMPLETED'}" class="text-[10px] font-semibold uppercase tracking-wider text-emerald-400">Completed</span>
+                        <span th:if="${project.status == 'ON_HOLD'}" class="text-[10px] font-semibold uppercase tracking-wider text-amber-400">On hold</span>
+                        <span th:if="${project.status == 'ARCHIVED'}" class="text-[10px] font-semibold uppercase tracking-wider text-gray-500">Archived</span>
+                    </div>
+                    <p class="text-gray-500 text-sm line-clamp-2" th:text="${project.description}">Description goes here...</p>
+                </div>
+
+                <span class="text-xs text-gray-600 shrink-0 hidden md:block" th:text="${#dates.format(project.startDate, 'MMM yyyy')}">Mar 2026</span>
+
+                <svg class="w-4 h-4 text-gray-600 group-hover:text-blue-400 transform group-hover:translate-x-1 transition-all shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+            </a>
+        </div>
+    </section>
+
+    <!-- Empty state -->
+    <div th:if="${#lists.isEmpty(FeaturedProjects)}" class="text-center py-20 border border-dashed border-gray-800 rounded-3xl bg-gray-800/10">
+        <p class="text-gray-600 italic text-sm">No projects yet</p>
+    </div>
+
+</main>
+
+<footer class="border-t border-gray-800/50 pt-10 pb-16 text-center relative z-10">
+    <p class="text-gray-600 font-mono text-[10px] tracking-[0.3em]">yeah there's gonna be more I reckon</p>
+</footer>
+
+</body>
+</html>
