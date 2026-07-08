@@ -78,7 +78,8 @@ public class ProjectsController {
                                        @RequestParam(name = "status") String status,
                                        @RequestParam(name = "content") String content,
                                        @RequestParam(name = "thumbnail")MultipartFile thumbnail,
-                                       @RequestParam(name = "code") String code) {
+                                       @RequestParam(name = "code") String code,
+                                       @RequestParam(required = false, defaultValue = "false") boolean featured) {
 
 
         //check given code
@@ -115,7 +116,7 @@ public class ProjectsController {
         projectObj.setEndDate(endDate);
         projectObj.setStatus(status);
         projectObj.setContent(content);
-        //featured is not set during upload, you do it yourself
+        projectObj.setFeatured(featured); //by default it's false
 
         System.out.println("created ProjectObj");
         try{

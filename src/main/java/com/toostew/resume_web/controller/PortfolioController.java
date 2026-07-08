@@ -2,6 +2,7 @@ package com.toostew.resume_web.controller;
 
 
 import com.toostew.resume_web.DAO.PostDAO;
+import com.toostew.resume_web.DAO.ProjectsDAO;
 import com.toostew.resume_web.dto.RepoReturnObject;
 import com.toostew.resume_web.entity.Post;
 import com.toostew.resume_web.service.GithubService;
@@ -19,11 +20,12 @@ public class PortfolioController {
 
     private GithubService gitHubService;
     private PostDAO postDAO;
+    private ProjectsDAO projectsDAO;
 
-
-    public PortfolioController(GithubService gitHubService, PostDAO postDAO) {
+    public PortfolioController(GithubService gitHubService, PostDAO postDAO, ProjectsDAO projectsDAO) {
         this.gitHubService = gitHubService;
         this.postDAO = postDAO;
+        this.projectsDAO = projectsDAO;
     }
 
 
@@ -32,7 +34,7 @@ public class PortfolioController {
         // Fetch the projects from our cached service
         List<RepoReturnObject> repos = gitHubService.getCombinedData();
 
-
+        model.addAttribute("featuredProject", projectsDAO.getFeaturedProjectsOrLatest().get(0));
         model.addAttribute("projects", repos);
         model.addAttribute("latestPost", postDAO.getLatestPost());
 
@@ -44,5 +46,10 @@ public class PortfolioController {
         Resource resource = new ClassPathResource("static/pfp.jpg");
         return ResponseEntity.ok()
                 .body(resource);
+    }
+
+    @GetMapping("/ai-usage")
+    public String getAIUsage(){
+        return "ai-disclosure";
     }
 }
