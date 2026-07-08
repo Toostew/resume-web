@@ -35,6 +35,9 @@ public class Projects {
     @JoinColumn(name = "thumbnail") //MYSQL column name for this entity that points to the other entity
     private Thumbnail thumbnail;
 
+    @Column(name = "featured")
+    private boolean featured; //if false default to grab latest entry
+
 
     public int getId() {
         return id;

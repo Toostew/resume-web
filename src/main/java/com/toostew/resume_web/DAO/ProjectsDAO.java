@@ -4,10 +4,13 @@ import com.toostew.resume_web.entity.Projects;
 import com.toostew.resume_web.exception.DAOException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.TypedQuery;
 import jakarta.transaction.Transactional;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public class ProjectsDAO {
 
     private EntityManager em;
@@ -32,7 +35,7 @@ public class ProjectsDAO {
         }
     }
 
-    //return all files
+    //return all files, sorted by id (newer first)
     public List<Projects> readAllProjects() {
         try {
             // We create a query selecting "f" from the Projects entity
@@ -44,6 +47,35 @@ public class ProjectsDAO {
 
         } catch (Exception e) {
             throw new DAOException("Issue in ProjectsDAO: Could not retrieve all files", e);
+        }
+    }
+
+    //get featured Projects, sorted by ID so newer IDs first
+    public List<Projects> getFeaturedProjectsOrLatest() {
+        try {
+            TypedQuery<Projects> query = em.createQuery(
+                    "from Projects p where p.featured = true order by p.id desc", Projects.class);
+            List<Projects> files = query.getResultList();
+            if (files.isEmpty()) { //if there are no featured, return just the
+                List<Projects> all = readAllProjects(); // already sorted newest-first
+                return all.isEmpty() ? List.of() : List.of(all.get(0)); //return ONLY a list of the first item
+            }
+            return files;
+        } catch (Exception e) {
+            throw new DAOException("Issue in ProjectDAO: couldn't get featured projects, unknown issue", e);
+        }
+    }
+
+    //get non-featured Projects, sorted by ID so newer IDs first
+    public List<Projects> getNonFeaturedProjects() {
+        try {
+            TypedQuery<Projects> query = em.createQuery(
+                    "from Projects p where p.featured = false order by p.id desc", Projects.class);
+            List<Projects> files = query.getResultList();
+
+            return files;
+        } catch (Exception e) {
+            throw new DAOException("Issue in ProjectDAO: couldn't get featured projects, unknown issue", e);
         }
     }
 
