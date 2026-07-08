@@ -55,7 +55,7 @@
            class="group grid grid-cols-1 md:grid-cols-2 gap-0 bg-gray-800/40 backdrop-blur-sm border border-gray-800 rounded-2xl hover:border-blue-500/50 transition-all duration-500 overflow-hidden shadow-2xl">
 
             <div class="overflow-hidden">
-                <img th:src="@{/projects/render-thumbnail/{id}(id=${FeaturedProjects[0].thumbnail.id})}"
+                <img th:src="@{/blog/render-thumbnail/{id}(id=${FeaturedProjects[0].thumbnail.id})}"
                      th:alt="${FeaturedProjects[0].projectName}"
                      class="w-full h-64 md:h-full object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out">
             </div>
@@ -88,7 +88,7 @@
                class="group flex flex-col bg-gray-800/40 backdrop-blur-sm border border-gray-800 rounded-2xl hover:border-blue-500/50 transition-all duration-500 overflow-hidden shadow-xl">
 
                 <div class="overflow-hidden">
-                    <img th:src="@{/projects/render-thumbnail/{id}(id=${project.thumbnail.id})}"
+                    <img th:src="@{/blog/render-thumbnail/{id}(id=${project.thumbnail.id})}"
                          th:alt="${project.projectName}"
                          class="w-full h-44 object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out">
                 </div>
@@ -125,7 +125,7 @@
                th:href="@{/projects/{slug}(slug=${project.id})}"
                class="group flex items-center gap-5 py-5 hover:bg-gray-800/30 transition-colors -mx-4 px-4 rounded-lg">
 
-                <img th:src="@{/projects/render-thumbnail/{id}(id=${project.thumbnail.id})}"
+                <img th:src="@{/blog/render-thumbnail/{id}(id=${project.thumbnail.id})}"
                      th:alt="${project.projectName}"
                      class="w-16 h-16 rounded-lg object-cover shrink-0 hidden sm:block">
 

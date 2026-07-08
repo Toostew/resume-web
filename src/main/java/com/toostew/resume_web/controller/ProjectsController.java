@@ -5,6 +5,7 @@ import com.toostew.resume_web.DAO.FileDAO;
 import com.toostew.resume_web.DAO.PostDAO;
 import com.toostew.resume_web.DAO.ProjectsDAO;
 import com.toostew.resume_web.DAO.ThumbnailDAO;
+import com.toostew.resume_web.entity.Post;
 import com.toostew.resume_web.entity.Projects;
 import com.toostew.resume_web.entity.Thumbnail;
 import com.toostew.resume_web.exception.ControllerException;
@@ -12,15 +13,17 @@ import com.toostew.resume_web.exception.DAOException;
 import com.toostew.resume_web.exception.R2ServiceException;
 import com.toostew.resume_web.service.R2Service;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.UUID;
@@ -138,6 +141,22 @@ public class ProjectsController {
         }
 
         return "redirect:/projects";
+    }
+
+    //print the content as literal HTML
+    @GetMapping("/projects/{id}")
+    @ResponseBody
+    public ResponseEntity<byte[]> renderBlog(@PathVariable int id) {
+        try {
+            Projects temp = projectsDAO.readProjects(id);
+
+            return ResponseEntity.ok()
+                    .contentType(MediaType.TEXT_HTML)
+                    .body(temp.getContent().getBytes(StandardCharsets.UTF_8));
+
+        } catch (Exception e) {
+            throw new ControllerException("Issue in BlogController: could not render raw data", e);
+        }
     }
 
 }
