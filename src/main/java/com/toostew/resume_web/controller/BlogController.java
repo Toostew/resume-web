@@ -13,6 +13,7 @@ import com.toostew.resume_web.exception.R2ServiceException;
 import com.toostew.resume_web.service.R2Service;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -58,6 +59,97 @@ public class BlogController {
     @GetMapping("/blog/upload")
     public String uploadBlogPage(){
         return "blog-upload";
+    }
+
+    @GetMapping("/blog/edit")
+    public String editBlogFront(Model model){
+        model.addAttribute("numberOfPosts", postDAO.getTotalNumberOfPosts());
+        model.addAttribute("ListOfAllPosts", postDAO.getAllPosts());
+        return "blog-edit-front";
+    }
+
+    @GetMapping("/blog/edit/{id}")
+    public String editBlogPage(@PathVariable int id, Model model){
+        model.addAttribute("post", postDAO.read(id)); //fetch that post from its ID
+
+
+        return "blog-edit-page";
+    }
+
+    @PostMapping("/blog/edit/process")
+    public String processBlogEdit(
+            @RequestParam("id") int id,
+            @RequestParam("title") String title,
+            @RequestParam("titleURLFriendly") String titleURLFriendly,
+            @RequestParam("uploadDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate uploadDate,
+            @RequestParam("ptype") String ptype,
+            @RequestParam("description") String description,
+            @RequestParam("content") String content,
+            @RequestParam("editPassword") String password,
+            @RequestParam(value = "thumbnailFile", required = false) MultipartFile thumbnailFile){
+
+
+        if(!password.equalsIgnoreCase(serviceCode)){
+            return "redirect:/blog/edit";
+        }
+
+        //alter the existing post attributes
+        Post tempPost = postDAO.read(id);
+        tempPost.setTitle(title);
+        tempPost.setTitleURLFriendly(titleURLFriendly);
+        tempPost.setUploadDate(uploadDate);
+        tempPost.setPtype(ptype);
+        tempPost.setDescription(description);
+        tempPost.setContent(content);
+
+        UUID uuid = UUID.randomUUID();
+
+
+        if(thumbnailFile != null){
+            Thumbnail thumbnailObj = new Thumbnail();
+            thumbnailObj.setStored_name(uuid.toString() + "-thumbnail");
+            thumbnailObj.setOriginal_name(thumbnailFile.getOriginalFilename());
+            thumbnailObj.setSize(thumbnailFile.getSize());
+            thumbnailObj.setContent_type(thumbnailFile.getContentType());
+            thumbnailObj.setDate_created(uploadDate);
+            Thumbnail recaptureThumbnail = new Thumbnail();
+            try{
+                recaptureThumbnail = thumbnailDAO.create(thumbnailObj);
+            } catch(DAOException e){
+                throw new ControllerException("Issue in BlogController: could not create thumbnail", e);
+            } catch(Exception e){
+                throw new ControllerException("Issue in BlogController: could not create thumbnail", e);
+            }
+            tempPost.setThumbnail(recaptureThumbnail);
+
+            try{
+                byte[] thumbnailByte = thumbnailFile.getBytes();
+                r2Service.postObjectWithBucketAndKey(bucketName, recaptureThumbnail.getStored_name(), thumbnailByte, recaptureThumbnail.getSize(), recaptureThumbnail.getContent_type());
+            } catch (IOException e) {
+                throw new ControllerException("Issue in BlogController: could not upload thumbnail to R2, IO issue", e);
+            } catch(R2ServiceException e){
+                throw new ControllerException("Issue in BlogController: could not upload thumbnail to R2, R2Service issue", e);
+            } catch(Exception e){
+                throw new ControllerException("Issue in BlogController: could not upload thumbnail to R2, unknown issue", e);
+            }
+        }
+
+        System.out.println("finished processing blog edit");
+
+        try{
+            postDAO.update(tempPost); //send to server to update the attributes
+        } catch (DAOException e){
+            throw new ControllerException("Issue in BlogController: could not update post, DAO issue", e);
+        } catch(Exception e){
+            throw new ControllerException("Issue in BlogController: could not update post, unknown issue", e);
+        }
+
+
+
+
+
+
+        return "redirect:/blog/edit";
     }
 
     //processing

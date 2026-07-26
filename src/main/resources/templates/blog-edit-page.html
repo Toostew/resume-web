@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="'Edit: ' + ${post.title}">Edit Blog Post</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .mono { font-family: 'Fira Code', monospace; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #111827; }
+        ::-webkit-scrollbar-thumb { background: #374151; border-radius: 10px; }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-100 min-h-screen selection:bg-blue-500/30 relative flex flex-col">
+
+<!-- Background FX -->
+<div class="fixed inset-0 z-0 opacity-20" style="background-image: radial-gradient(#374151 0.5px, transparent 0.5px); background-size: 32px 32px;"></div>
+<div class="fixed -top-24 -left-24 w-96 h-96 bg-blue-600/10 rounded-full blur-[120px] z-0"></div>
+
+<main class="relative z-10 max-w-4xl mx-auto px-6 py-12 flex-grow w-full">
+
+    <!-- Top Bar -->
+    <div class="flex justify-between items-center mb-8">
+        <a href="/blog" class="inline-flex items-center text-gray-500 hover:text-blue-400 transition-colors text-sm font-medium group">
+            <svg class="w-4 h-4 mr-2 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+            </svg>
+            Cancel & Back
+        </a>
+        <span class="text-xs font-mono text-gray-500">ID: <span class="text-blue-400" th:text="${post.id}">1</span></span>
+    </div>
+
+    <header class="mb-8">
+        <h1 class="text-3xl font-bold tracking-tight text-white">Edit Post Attributes</h1>
+        <p class="text-gray-400 text-sm mt-1">Update metadata, upload a new thumbnail, and edit markdown content.</p>
+    </header>
+
+    <!-- Regular Form POST (No th:object) -->
+    <form th:action="@{/blog/edit/process}" method="POST" enctype="multipart/form-data" class="space-y-6">
+        
+        <!-- Explicit Hidden ID Field -->
+        <input type="hidden" name="id" th:value="${post.id}" />
+
+        <!-- Metadata Grid -->
+        <div class="bg-gray-950/40 border border-gray-800 rounded-xl p-6 space-y-4">
+            <h2 class="text-xs font-mono text-blue-400 uppercase tracking-widest mb-4">// Metadata Settings</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Title -->
+                <div>
+                    <label class="block text-xs font-mono text-gray-400 mb-1">Title</label>
+                    <input type="text" name="title" th:value="${post.title}" required
+                        class="w-full bg-gray-900 border border-gray-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500 transition-colors">
+                </div>
+
+                <!-- URL Friendly Title / Slug -->
+                <div>
+                    <label class="block text-xs font-mono text-gray-400 mb-1">URL Slug (titleURLFriendly)</label>
+                    <input type="text" name="titleURLFriendly" th:value="${post.titleURLFriendly}" placeholder="my-awesome-post" required
+                        class="w-full bg-gray-900 border border-gray-800 rounded-lg px-3 py-2 text-sm text-white mono focus:outline-none focus:border-blue-500 transition-colors">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                <!-- Upload Date -->
+                <div>
+                    <label class="block text-xs font-mono text-gray-400 mb-1">Upload Date</label>
+                    <input type="date" name="uploadDate" th:value="${post.uploadDate}" required
+                        class="w-full bg-gray-900 border border-gray-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500 transition-colors">
+                </div>
+
+                <!-- Post Type (ptype) -->
+                <div>
+                    <label class="block text-xs font-mono text-gray-400 mb-1">Post Type (ptype)</label>
+                    <select name="ptype" 
+                        class="w-full bg-gray-900 border border-gray-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500 transition-colors">
+                        <option value="post" th:selected="${post.ptype == 'post'}">Post</option>
+                        <option value="art" th:selected="${post.ptype == 'art'}">Art</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Thumbnail Upload (Optional) -->
+            <div class="pt-2 border-t border-gray-800/60 mt-4">
+                <div class="flex justify-between items-center mb-1">
+                    <label class="block text-xs font-mono text-gray-400">
+                        Thumbnail Image <span class="text-gray-500 font-normal">(Optional — leave blank to keep existing)</span>
+                    </label>
+                    <span th:if="${post.thumbnail != null}" class="text-[10px] font-mono text-blue-400">
+                        Current ID: <span th:text="${post.thumbnail.id}"></span>
+                    </span>
+                </div>
+                <input type="file" name="thumbnailFile" accept="image/png, image/jpeg, image/jpg"
+                    class="w-full bg-gray-900 border border-gray-800 rounded-lg text-xs text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-l-lg file:border-0 file:text-xs file:font-mono file:bg-gray-800 file:text-blue-400 hover:file:bg-gray-700 cursor-pointer focus:outline-none focus:border-blue-500 transition-colors">
+                <p class="text-[10px] text-gray-500 font-mono mt-1">Allowed Formats: .png, .jpg, .jpeg</p>
+            </div>
+        </div>
+
+        <!-- Front Page Description -->
+        <div class="bg-gray-950/40 border border-gray-800 rounded-xl p-6 space-y-2">
+            <label class="block text-xs font-mono text-blue-400 uppercase tracking-widest mb-1">// Description (Front Page Snippet)</label>
+            <textarea name="description" th:text="${post.description}" rows="3" placeholder="Short description to show on card listing..."
+                class="w-full bg-gray-900 border border-gray-800 rounded-lg p-3 text-sm text-gray-200 focus:outline-none focus:border-blue-500 transition-colors leading-relaxed"></textarea>
+        </div>
+
+        <!-- Markdown Content -->
+        <div class="bg-gray-950/40 border border-gray-800 rounded-xl p-6 space-y-2">
+            <div class="flex justify-between items-center mb-1">
+                <label class="block text-xs font-mono text-blue-400 uppercase tracking-widest">// Article Content (Literal Markdown)</label>
+                <span class="text-[10px] font-mono text-gray-500">Supports Raw Markdown</span>
+            </div>
+            <textarea name="content" th:text="${post.content}" rows="16" placeholder="# Type your markdown here..."
+                class="w-full bg-gray-900 border border-gray-800 rounded-lg p-4 text-sm text-gray-200 mono leading-relaxed focus:outline-none focus:border-blue-500 transition-colors"></textarea>
+        </div>
+
+        <!-- Authorization Password (Required) -->
+        <div class="bg-gray-950/40 border border-amber-900/40 rounded-xl p-6 space-y-2">
+            <div class="flex justify-between items-center mb-1">
+                <label class="block text-xs font-mono text-amber-400 uppercase tracking-widest">// Admin Authorization Password</label>
+                <span class="text-[10px] font-mono text-red-400">Required</span>
+            </div>
+            <input type="text" name="editPassword" required placeholder="Enter secret password to authorize edit..."
+                class="w-full bg-gray-900 border border-gray-800 rounded-lg px-3 py-2 text-sm text-white mono focus:outline-none focus:border-amber-500 transition-colors">
+            <p class="text-[10px] text-gray-500 font-mono mt-1">Changes will be rejected if this password is missing or incorrect.</p>
+        </div>
+
+        <!-- Action Bar -->
+        <div class="flex justify-end gap-4 pt-4">
+            <a href="/blog" class="px-5 py-2.5 rounded-lg text-xs font-semibold text-gray-400 hover:text-white bg-gray-800/50 hover:bg-gray-800 transition-colors">
+                Discard Changes
+            </a>
+            <button type="submit" class="px-5 py-2.5 rounded-lg text-xs font-semibold text-white bg-blue-600 hover:bg-blue-500 transition-colors shadow-lg shadow-blue-600/20">
+                Save Post Changes
+            </button>
+        </div>
+
+    </form>
+</main>
+
+</body>
+</html>
