@@ -65,6 +65,22 @@ public class ProjectsController {
         return "project-front";
     }
 
+    //display front page of project edit, show all projects
+    @GetMapping("/projects/edit")
+    public String projectEdit(Model model) {
+        model.addAttribute("AllProjects", projectsDAO.readAllProjects()); //returns all projects
+        model.addAttribute("FeaturedProjects",  projectsDAO.getFeaturedProjectsOrLatest());
+
+        return "project-edit-front";
+    }
+
+    @GetMapping("projects/edit/{id}")
+    public String  projectEditPage(@PathVariable int id, Model model) {
+        model.addAttribute("Project", projectsDAO.readProjects(id));
+
+        return "project-edit-page";
+    }
+
     @GetMapping("/projects/upload")
     public String projectUpload() {
         return "project-upload";
